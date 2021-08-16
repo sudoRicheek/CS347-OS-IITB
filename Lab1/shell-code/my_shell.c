@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -55,6 +56,15 @@ char **tokenize(char *line)
 	return tokens;
 }
 
+void destroy_tokens(char **tokens) {
+	if (tokens != NULL) {
+		for (size_t i = 0; tokens[i] != NULL; i++) {
+			free(tokens[i]);
+		}
+		free(tokens);
+	}
+}
+
 void multi_handler_func(char* line) {
 	uint OP_MODE = 0;
 	if (strstr(line, "&&&"))
@@ -96,6 +106,7 @@ void multi_handler_func(char* line) {
 			int p = execvp(tokens[0], tokens);
 			if (p == -1) {
 				perror("SHELL"); // we expect execvp to provide the correct error response!
+				destroy_tokens(tokens); // clean child memory image if exec fails
 				_exit(1);
 			}
 		}
@@ -112,17 +123,17 @@ void multi_handler_func(char* line) {
 				}
 			}
 		}
+		// Free the space!
+		destroy_tokens(tokens);
 	}
 	else if (OP_MODE == SERIES_FG) { // SERIES FOREGROUND
 		linesegment = strtok(line, "&"); // separated by && 
-		while (linesegment != NULL && linesegment[0] != '\n')
-		{
+		while (linesegment != NULL && linesegment[0] != '\n') {
 			tokens = tokenize(linesegment);
 
 			if (tokens[0] == NULL)
 				continue;
 			
-
 			pid_t pid_fg_child = fork();
 			if (pid_fg_child < 0) {
 				perror("SHELL: FATAL FORK FAILED");
@@ -131,6 +142,7 @@ void multi_handler_func(char* line) {
 				int p = execvp(tokens[0], tokens);
 				if (p == -1) {
 					perror("SHELL"); // we expect execvp to provide the correct error response!
+					destroy_tokens(tokens); // clean child memory image if exec fails
 					_exit(1); // gracefully exit if execvp fails
 				}
 			}
@@ -143,6 +155,9 @@ void multi_handler_func(char* line) {
 					printf("%s done\n", tokens[0]);
 			}
 			linesegment = strtok(NULL, "&"); // get next command in sequence
+
+			// Free the space!
+			destroy_tokens(tokens); // since there are mallocs on every tokenize operation
 		}	
 	}
 	else if (OP_MODE == PARALL_FG) { // PARALLEL FOREGROUND
@@ -161,6 +176,7 @@ void multi_handler_func(char* line) {
 				int p = execvp(tokens[0], tokens);
 				if (p == -1) {
 					perror("SHELL"); // we expect execvp to provide the correct error response!
+					destroy_tokens(tokens); // clean child memory image if exec fails
 					_exit(1); // gracefully exit if execvp fails
 				}
 			}
@@ -179,6 +195,9 @@ void multi_handler_func(char* line) {
 				}
 			}			
 			linesegment = strtok(NULL, "&");
+
+			// Free the space!
+			destroy_tokens(tokens); // since there are mallocs on every tokenize operation
 		}		
 
 		// Make all the runnable processes and finally
@@ -194,14 +213,6 @@ void multi_handler_func(char* line) {
 				}				
 			}			
 		}
-	}
-	
-	// Free the space!
-	if (tokens != NULL) {
-		for (size_t i = 0; tokens[i] != NULL; i++) {
-			free(tokens[i]);
-		}
-		free(tokens);
 	}	
 }
 
@@ -249,7 +260,20 @@ int main(int argc, char *argv[])
 		}
 
 		// CASES: We can currently handle:
-		if (!strcmp(tokens[0], "cd")) {
+		if (!strcmp(tokens[0], "exit")) {
+			for (size_t i = 0; i < MAX_BG_PROCS; i++) {
+				if (bg_proc[i] != -1) {
+					int k = kill(bg_proc[i], SIGKILL);
+					if (k == 0)
+						bg_proc[i] = -1;
+					else if (k == -1)
+						perror("SHELL"); // we expect kill to set the correct errno
+				}
+			}
+			destroy_tokens(tokens);
+			break;
+		}
+		else if (!strcmp(tokens[0], "cd")) {
 			if (tokens[1] == NULL || tokens[2] != NULL) {
 				printf("SHELL: Incorrect command\n");
 			}
@@ -278,6 +302,7 @@ int main(int argc, char *argv[])
 				int p = execvp(tokens[0], tokens);
 				if (p == -1) {
 					perror("SHELL");
+					destroy_tokens(tokens); // clean child memory image if exec fails
 					// Interesting read: https://stackoverflow.com/questions/5422831/what-is-the-difference-between-using-exit-exit-in-a-conventional-linux-fo
 					_exit(1);
 				}
@@ -287,15 +312,8 @@ int main(int argc, char *argv[])
 			}
 		}		
 
-		
-
 		// Freeing the allocated memory
-		if (tokens != NULL) {
-			for (size_t i = 0; tokens[i] != NULL; i++) {
-				free(tokens[i]);
-			}
-			free(tokens);
-		}		
+		destroy_tokens(tokens);		
 	}
 	return 0;
 }
