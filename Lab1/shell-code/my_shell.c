@@ -25,35 +25,30 @@ pid_t fg_proc[MAX_FG_PROCS];
 
 
 uint SIGINT_INTERRUPT = 0;
+uint EXIT_JUMP = 0; // Signifies if we want to exit after we returning from a function
 /* 
 * Splits the string by space and returns the array of tokens
 */
-char **tokenize(char *line)
-{
+char **tokenize(char *line) {
     char **tokens = (char **)malloc(MAX_NUM_TOKENS * sizeof(char *));
     char *token = (char *)malloc(MAX_TOKEN_SIZE * sizeof(char));
     int i, tokenIndex = 0, tokenNo = 0;
 
-    for (i = 0; i < strlen(line); i++)
-    {
+    for (i = 0; i < strlen(line); i++) {
         char readChar = line[i];
 
-        if (readChar == ' ' || readChar == '\n' || readChar == '\t')
-        {
+        if (readChar == ' ' || readChar == '\n' || readChar == '\t') {
             token[tokenIndex] = '\0';
-            if (tokenIndex != 0)
-            {
+            if (tokenIndex != 0) {
                 tokens[tokenNo] = (char *)malloc(MAX_TOKEN_SIZE * sizeof(char));
                 strcpy(tokens[tokenNo++], token);
                 tokenIndex = 0;
             }
         }
-        else
-        {
+        else {
             token[tokenIndex++] = readChar;
         }
     }
-
     free(token);
     tokens[tokenNo] = NULL;
     return tokens;
@@ -61,9 +56,8 @@ char **tokenize(char *line)
 
 void destroy_tokens(char **tokens) {
     if (tokens != NULL) {
-        for (size_t i = 0; tokens[i] != NULL; i++) {
+        for (size_t i = 0; tokens[i] != NULL; i++)
             free(tokens[i]);
-        }
         free(tokens);
     }
 }
@@ -123,11 +117,7 @@ void interrupt_handl(int signo) {
         for (size_t i = 0; i < MAX_FG_PROCS; i++) {
             if (fg_proc[i] != -1) {
                 int k = kill(fg_proc[i], SIGKILL);
-                if (k == 0) {
-                    waitpid(fg_proc[i], NULL, 0);
-                    fg_proc[i] = -1;
-                }
-                else if (k == -1) 
+                if (k == -1) 
                     perror("SHELL"); // we expect kill to set the correct errno
             }
         }
@@ -200,27 +190,56 @@ void multi_handler_func(char* line) {
                 destroy_tokens(tokens);
                 return;
             }
-            
-            pid_t pid_fg_child = fork();
-            if (pid_fg_child < 0) {
-                perror("SHELL: FATAL FORK FAILED");
+
+            // We support exit and cd in SERIES FOREGROUND
+            if (!strcmp(tokens[0], "exit")) { // exit
+                for (size_t i = 0; i < MAX_BG_PROCS; i++) {
+                    if (bg_proc[i] != -1) {
+                        int k = kill(bg_proc[i], SIGKILL);
+                        if (k == 0)
+                            bg_proc[i] = -1;
+                        else if (k == -1)
+                            perror("SHELL"); // we expect kill to set the correct errno
+                    }
+                }
+                destroy_tokens(tokens);
+                EXIT_JUMP = 1; // Set the EXIT_JUMP flag.
+                return;
             }
-            else if (pid_fg_child == 0) {
-                setpgid(0, 0); // make a new process group
-                int p = execvp(tokens[0], tokens);
-                if (p == -1) {
-                    perror("SHELL"); // we expect execvp to provide the correct error response!
-                    destroy_tokens(tokens); // clean child memory image if exec fails
-                    _exit(1); // gracefully exit if execvp fails
+            else if (!strcmp(tokens[0], "cd")) { // cd
+                if (tokens[1] == NULL || tokens[2] != NULL) {
+                    printf("SHELL: Incorrect command\n");
+                }
+                else {
+                    int ch = chdir(tokens[1]);
+                    if (ch < 0)
+                        perror("SHELL");
                 }
             }
-            else {
-                // In parent shell
-                addproc_fg(pid_fg_child); // Add proc to foreground processes
-                pid_t pidchange = waitpid(pid_fg_child, NULL, 0); // wait for child to die
-                
-                if (pidchange == pid_fg_child)
-                    reap_fg_pid(pidchange);
+            else { // normal exec command cases
+                pid_t pid_fg_child = fork();
+                if (pid_fg_child < 0) {
+                    perror("SHELL: FATAL FORK FAILED");
+                }
+                else if (pid_fg_child == 0) {
+                    setpgid(0, 0); // make a new process group
+                    int p = execvp(tokens[0], tokens);
+                    if (p == -1) {
+                        perror("SHELL"); // we expect execvp to provide the correct error response!
+                        destroy_tokens(tokens); // clean child memory image if exec fails
+                        _exit(1); // gracefully exit if execvp fails
+                    }
+                }
+                else {
+                    // In parent shell
+                    addproc_fg(pid_fg_child); // Add proc to foreground processes
+                    pid_t pidchange = waitpid(pid_fg_child, NULL, 0); // wait for child to die
+                    if (pidchange == -1)
+                        if (errno == EINTR)
+                            pidchange = waitpid(pid_fg_child, NULL, 0);
+                    if (pidchange == pid_fg_child) 
+                        reap_fg_pid(pidchange);
+                }
             }
             linesegment = strtok(NULL, "&"); // get next command in sequence
 
@@ -264,6 +283,9 @@ void multi_handler_func(char* line) {
         for (size_t i = 0; i < MAX_FG_PROCS; i++) {
             if (fg_proc[i] != -1) {
                 pid_t pidchange = waitpid(fg_proc[i], NULL, 0);
+                if (pidchange == -1)
+                    if (errno == EINTR)
+                        pidchange = waitpid(fg_proc[i], NULL, 0);                
                 if (pidchange == fg_proc[i])
                     fg_proc[i] = -1;		
             }			
@@ -298,7 +320,7 @@ int main(int argc, char *argv[])
                     printf("%s%d %s\n", "SHELL: BACKGROUND PROCESS PID:", child_proc, "FINISHED");
                 }	
             }
-        }
+        }        
         
 
         /* BEGIN: TAKING INPUT */
@@ -349,6 +371,8 @@ int main(int argc, char *argv[])
         }
         else if (strchr(line, '&')) { // Check if background execution is required
             multi_handler_func(line); // handles execution of multiple commands at the same time
+            if (EXIT_JUMP == 1)
+                break;            
         }
         else {
             // plain foreground execution case
@@ -372,6 +396,9 @@ int main(int argc, char *argv[])
                 // In parent process
                 addproc_fg(pidchild); // Add process to the list of foreground processes
                 pid_t pidchange = waitpid(pidchild, NULL, 0); // NULL is ((void *)0)
+                if (pidchange == -1)
+                    if (errno == EINTR)
+                        pidchange = waitpid(pidchild, NULL, 0);   
                 if (pidchange == pidchild)
                     reap_fg_pid(pidchange);
             }
