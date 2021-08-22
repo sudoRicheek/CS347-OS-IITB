@@ -186,7 +186,7 @@ void multi_handler_func(char* line) {
             if (tokens[0] == NULL)
                 continue;
             
-            if (SIGINT_INTERRUPT) {
+            if (SIGINT_INTERRUPT || EXIT_JUMP) {
                 destroy_tokens(tokens);
                 return;
             }
@@ -196,8 +196,10 @@ void multi_handler_func(char* line) {
                 for (size_t i = 0; i < MAX_BG_PROCS; i++) {
                     if (bg_proc[i] != -1) {
                         int k = kill(bg_proc[i], SIGKILL);
-                        if (k == 0)
+                        if (k == 0) {
+                            waitpid(bg_proc[i], NULL, 0);
                             bg_proc[i] = -1;
+                        }
                         else if (k == -1)
                             perror("SHELL"); // we expect kill to set the correct errno
                     }
