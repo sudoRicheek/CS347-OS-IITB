@@ -49,7 +49,11 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  // ADDITIONS
   int num_ctx_swtch;           // Number of times the process was context switched in by the scheduler
+  int WELCOME_SET;             // Bool value stores if welcome function is set
+  void(*childStartLoc)(void);  // Stores the function pointer where the child starts executing after fork
 };
 
 // Process memory is laid out contiguously, low addresses first:

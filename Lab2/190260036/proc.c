@@ -21,11 +21,6 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
-// ######################################
-// GLOBAL variables added
-uint WELCOME_SET = 0;
-void(*WELCOME_PTR)(void) = (void*)0; // NULL
-
 void
 pinit(void)
 {
@@ -96,8 +91,9 @@ found:
   p->pid = nextpid++;
 
   // ######################################
-  // num_ctx_swtch addition
+  // num_ctx_swtch and welcome function init
   p->num_ctx_swtch = 0; // we don't consider creation as ctx switch
+  p->WELCOME_SET = 0;    // We initialise that the welcome function is not set.
 
   release(&ptable.lock);
 
@@ -212,9 +208,9 @@ fork(void)
 
   // ##################################
   // Implementation of welcomeFunction use
-  if (WELCOME_SET==1) {
-    np->tf->eip = (uint)WELCOME_PTR;
-    WELCOME_PTR = (void(*)(void))curproc->tf->eip;
+  if (curproc->WELCOME_SET == 1) {
+    np->tf->eip = (uint)curproc->childStartLoc;
+    np->childStartLoc = (void(*)(void))curproc->tf->eip;
   }
   
   // Clear %eax so that fork returns 0 in the child.
@@ -620,22 +616,22 @@ procInfoRet(int pid, struct processInfo *procInfo)
 }
 
 // proc function to help sys_welcomeFunction.
-// Sets the WELCOME_SET bit and WELCOME_FUNCTION
+// Sets the WELCOME_SET bit and childStartLoc
 // Pointer.
 void
 setWelcomeFunction(void(*welcomeFunction)(void))
 {
-  WELCOME_SET = 1;
-  WELCOME_PTR = welcomeFunction;
+  struct proc *curproc = myproc();
+  curproc->WELCOME_SET = 1;
+  curproc->childStartLoc = welcomeFunction;
 }
 
 // proc function to help sys_welcomeDone.
-// Unsets the WELCOME_SET bit and points the 
-// process to execute code after fork.
+// Points the process to execute code after fork.
 void
 setWelcomeDone(void)
 {
-  WELCOME_SET = 0;
   struct proc *curproc = myproc();
-  curproc->tf->eip = (uint)WELCOME_PTR;
+  curproc->tf->eip = (uint)curproc->childStartLoc; // we had stored old eip in start child loc
+  curproc->childStartLoc = (void*)0;
 }
