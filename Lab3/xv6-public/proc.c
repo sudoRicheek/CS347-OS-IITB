@@ -540,19 +540,12 @@ procdump(void)
 int
 help_numvp(void)
 {
-  uint sz;
   struct proc *curproc = myproc();
-  sz = curproc->sz;
-
-  int numpages = 0;
-  numpages += sz/PGSIZE;
-  uint r = sz%PGSIZE;
-    
-  if (r > 0)
-    numpages += 1;
-
-  return numpages-1; // To account for the guard page.
-  // guard page is not a user page.
+  return PGROUNDUP(curproc->sz)/PGSIZE; 
+  // To account for the guard page.
+  // Even though the guard page is 
+  // not a user page, it was asked in the PS
+  // to count it in.
 }
 
 // Helper function for numpp. Digs out

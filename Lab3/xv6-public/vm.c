@@ -408,8 +408,7 @@ help_countmem(pde_t *pgdir)
 
   pde_t *pde;
   pte_t *pgtab;
-
-  for(pdi = 0; pdi < NPDENTRIES; pdi++)
+  for(pdi = 0; pdi < NPDENTRIES && pdi < (KERNBASE>>22); pdi++)
   {
     pde = &pgdir[pdi];
     if (*pde & PTE_P) {
@@ -417,7 +416,7 @@ help_countmem(pde_t *pgdir)
       for(pti = 0; pti < NPTENTRIES; pti++)
       {
         pte_t *pte = &pgtab[pti];
-        if ((*pte & PTE_P) && (*pte & PTE_U))
+        if (*pte & PTE_P)
          count++;      
       }
     }
