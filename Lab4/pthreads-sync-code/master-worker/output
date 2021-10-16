@@ -1,0 +1,311 @@
+Produced 0 by master 0
+Produced 1 by master 0
+Produced 2 by master 0
+Produced 3 by master 0
+Consumed 3 by worker 0
+Consumed 2 by worker 0
+Consumed 1 by worker 0
+Consumed 0 by worker 0
+Produced 4 by master 3
+Produced 5 by master 3
+Produced 6 by master 3
+Produced 7 by master 3
+Consumed 7 by worker 1
+Consumed 6 by worker 1
+Consumed 5 by worker 1
+Consumed 4 by worker 1
+Produced 8 by master 2
+Produced 9 by master 2
+Produced 10 by master 2
+Produced 11 by master 2
+Consumed 11 by worker 0
+Produced 12 by master 8
+Consumed 12 by worker 0
+Produced 13 by master 9
+Consumed 13 by worker 0
+Consumed 10 by worker 0
+Consumed 9 by worker 0
+Produced 14 by master 4
+Consumed 14 by worker 0
+Produced 15 by master 4
+Produced 16 by master 4
+Produced 17 by master 4
+Consumed 17 by worker 5
+Consumed 16 by worker 0
+Produced 18 by master 4
+Consumed 18 by worker 0
+Produced 19 by master 6
+Consumed 19 by worker 0
+Consumed 15 by worker 0
+Produced 20 by master 6
+Consumed 20 by worker 2
+Produced 21 by master 6
+Produced 22 by master 6
+Consumed 22 by worker 2
+Produced 23 by master 10
+Consumed 23 by worker 2
+Produced 24 by master 8
+Consumed 24 by worker 2
+Produced 25 by master 0
+Produced 26 by master 10
+Consumed 26 by worker 5
+Produced 27 by master 9
+Consumed 27 by worker 1
+Consumed 25 by worker 8
+Consumed 21 by worker 1
+Consumed 8 by worker 3
+Produced 28 by master 4
+Consumed 28 by worker 0
+Produced 29 by master 6
+Consumed 29 by worker 0
+Produced 30 by master 4
+Produced 31 by master 4
+Produced 32 by master 4
+Produced 33 by master 4
+Consumed 33 by worker 0
+Consumed 32 by worker 4
+Consumed 31 by worker 4
+Consumed 30 by worker 4
+Produced 34 by master 4
+Produced 35 by master 10
+Consumed 35 by worker 7
+Consumed 34 by worker 10
+Produced 36 by master 10
+Consumed 36 by worker 5
+Produced 37 by master 7
+Produced 38 by master 0
+Produced 39 by master 0
+Produced 40 by master 0
+Consumed 40 by worker 1
+Produced 41 by master 6
+Consumed 41 by worker 1
+Consumed 39 by worker 8
+Produced 42 by master 7
+Produced 43 by master 1
+Consumed 43 by worker 2
+Produced 44 by master 1
+Consumed 44 by worker 6
+Consumed 42 by worker 0
+Consumed 38 by worker 6
+Consumed 37 by worker 7
+Produced 45 by master 2
+Consumed 45 by worker 5
+Produced 46 by master 10
+Consumed 46 by worker 11
+Produced 47 by master 10
+Produced 48 by master 10
+Consumed 48 by worker 13
+Consumed 47 by worker 7
+Produced 49 by master 10
+Produced 50 by master 7
+Produced 51 by master 7
+Produced 52 by master 7
+Consumed 52 by worker 3
+Produced 53 by master 10
+Consumed 53 by worker 12
+Consumed 51 by worker 14
+Produced 54 by master 10
+Consumed 54 by worker 12
+Consumed 50 by worker 5
+Produced 55 by master 2
+Consumed 55 by worker 12
+Produced 56 by master 10
+Consumed 56 by worker 5
+Consumed 49 by worker 12
+Produced 57 by master 2
+Produced 58 by master 10
+Consumed 58 by worker 5
+Produced 59 by master 8
+Produced 60 by master 2
+Consumed 60 by worker 5
+Produced 61 by master 10
+Produced 62 by master 8
+Consumed 62 by worker 8
+Produced 63 by master 2
+Consumed 63 by worker 6
+Consumed 61 by worker 2
+Produced 64 by master 2
+Produced 65 by master 1
+Consumed 65 by worker 3
+Consumed 64 by worker 12
+Produced 66 by master 1
+Consumed 66 by worker 2
+Produced 67 by master 1
+Produced 68 by master 1
+Consumed 68 by worker 12
+Produced 69 by master 8
+Consumed 69 by worker 2
+Produced 70 by master 8
+Consumed 70 by worker 13
+Consumed 67 by worker 5
+Produced 71 by master 5
+Produced 72 by master 8
+Consumed 72 by worker 7
+Produced 73 by master 5
+Consumed 73 by worker 6
+Produced 74 by master 0
+Consumed 74 by worker 11
+Consumed 71 by worker 3
+Consumed 59 by worker 1
+Consumed 57 by worker 3
+Produced 75 by master 8
+Produced 76 by master 10
+Consumed 76 by worker 3
+Produced 77 by master 1
+Consumed 77 by worker 12
+Produced 78 by master 10
+Produced 79 by master 9
+Consumed 79 by worker 12
+Consumed 78 by worker 12
+Produced 80 by master 9
+Consumed 80 by worker 7
+Consumed 75 by worker 12
+Produced 81 by master 0
+Produced 82 by master 2
+Consumed 82 by worker 7
+Consumed 81 by worker 12
+Produced 83 by master 0
+Consumed 83 by worker 6
+Produced 84 by master 5
+Produced 85 by master 5
+Consumed 85 by worker 7
+Consumed 84 by worker 7
+Produced 86 by master 8
+Produced 87 by master 8
+Produced 88 by master 8
+Consumed 88 by worker 3
+Consumed 87 by worker 21
+Consumed 86 by worker 21
+Produced 89 by master 10
+Produced 90 by master 0
+Produced 91 by master 10
+Consumed 91 by worker 11
+Produced 92 by master 2
+Consumed 92 by worker 22
+Produced 93 by master 2
+Consumed 93 by worker 23
+Consumed 90 by worker 23
+Consumed 89 by worker 23
+Produced 94 by master 2
+Consumed 94 by worker 12
+Produced 95 by master 2
+Consumed 95 by worker 9
+Produced 96 by master 2
+Consumed 96 by worker 0
+Produced 97 by master 2
+Produced 98 by master 2
+Consumed 98 by worker 18
+Consumed 97 by worker 18
+Produced 99 by master 2
+Consumed 99 by worker 21
+master 0 joined
+master 1 joined
+master 2 joined
+master 3 joined
+master 4 joined
+master 5 joined
+master 6 joined
+master 7 joined
+master 8 joined
+master 9 joined
+master 10 joined
+worker 0 joined
+worker 1 joined
+worker 2 joined
+worker 3 joined
+worker 4 joined
+worker 5 joined
+worker 6 joined
+worker 7 joined
+worker 8 joined
+worker 9 joined
+worker 10 joined
+worker 11 joined
+worker 12 joined
+worker 13 joined
+worker 14 joined
+worker 15 joined
+worker 16 joined
+worker 17 joined
+worker 18 joined
+worker 19 joined
+worker 20 joined
+worker 21 joined
+worker 22 joined
+worker 23 joined
+worker 24 joined
+worker 25 joined
+worker 26 joined
+worker 27 joined
+worker 28 joined
+worker 29 joined
+worker 30 joined
+worker 31 joined
+worker 32 joined
+worker 33 joined
+worker 34 joined
+worker 35 joined
+worker 36 joined
+worker 37 joined
+worker 38 joined
+worker 39 joined
+worker 40 joined
+worker 41 joined
+worker 42 joined
+worker 43 joined
+worker 44 joined
+worker 45 joined
+worker 46 joined
+worker 47 joined
+worker 48 joined
+worker 49 joined
+worker 50 joined
+worker 51 joined
+worker 52 joined
+worker 53 joined
+worker 54 joined
+worker 55 joined
+worker 56 joined
+worker 57 joined
+worker 58 joined
+worker 59 joined
+worker 60 joined
+worker 61 joined
+worker 62 joined
+worker 63 joined
+worker 64 joined
+worker 65 joined
+worker 66 joined
+worker 67 joined
+worker 68 joined
+worker 69 joined
+worker 70 joined
+worker 71 joined
+worker 72 joined
+worker 73 joined
+worker 74 joined
+worker 75 joined
+worker 76 joined
+worker 77 joined
+worker 78 joined
+worker 79 joined
+worker 80 joined
+worker 81 joined
+worker 82 joined
+worker 83 joined
+worker 84 joined
+worker 85 joined
+worker 86 joined
+worker 87 joined
+worker 88 joined
+worker 89 joined
+worker 90 joined
+worker 91 joined
+worker 92 joined
+worker 93 joined
+worker 94 joined
+worker 95 joined
+worker 96 joined
+worker 97 joined
+worker 98 joined
+worker 99 joined
