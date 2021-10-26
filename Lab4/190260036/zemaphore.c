@@ -21,9 +21,9 @@ void zem_init(zem_t *s, int value) {
 
 void zem_down(zem_t *s) {
     pthread_mutex_lock(&s->lock);
-    while(s->count <= 0)
-        pthread_cond_wait(&s->signal, &s->lock);
     s->count--;
+    if(s->count < 0)
+        pthread_cond_wait(&s->signal, &s->lock);
     pthread_mutex_unlock(&s->lock);
 }
 
